@@ -6,7 +6,12 @@ namespace Domain.Marketplaces.Repositories
     public interface IMarketplaceRepository
     {
 
-        MarketplaceEntity GetById(int id);
-        //MarketplaceEntity GetAll();
+        MarketplaceEntity GetById(string id);
+
+        Task<IEnumerable<MarketplaceEntity>> GetAllMarketplacesAsync();
+
+        Task<MarketplaceEntity> UpdateMarketplaceFavoritesAsync(string id, bool isFavorite);
+
+        Task<MarketplaceEntity> UpdateMarketplaceStatusAsync(string id, string status);
     }
 }

@@ -1,5 +1,8 @@
 ﻿using Domain.Marketplaces.Entites;
 using Domain.Marketplaces.Repositories;
+using Infrastructure.MongoDB.Settings;
+using MongoDB.Bson;
+using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,20 +13,56 @@ namespace Infrastructure.Repositories
 {
     public class MarketplaceRepository : IMarketplaceRepository
     {
-
-        private List<MarketplaceEntity> marketplaces = new List<MarketplaceEntity>
+        private MongoClient _mongoClient = null;
+        private IMongoDatabase _database = null;
+        private IMongoCollection<MarketplaceEntity> _marketplaces = null;
+        public MarketplaceRepository() 
         {
-            new MarketplaceEntity{ Id = 1, Name= "MarjanMall", Description= "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged" } 
-        };
+            _mongoClient = new MongoClient("mongodb+srv://mehdiakkaemail:eSMsbDE5FIdQXeHh@octopia.adzeywo.mongodb.net/?retryWrites=true&w=majority");
+            _database = _mongoClient.GetDatabase("Octopia");
+            _marketplaces = _database.GetCollection<MarketplaceEntity>("Marketplaces");
+        }
+        
 
-        public MarketplaceEntity GetById(int id)
+        public MarketplaceEntity GetById(string id)
         {
-            return marketplaces.FirstOrDefault(_ => _.Id == id);
+            return _marketplaces.Find(market => market.Id == id).FirstOrDefault();
         }
 
-        /*public MarketplaceEntity GetAll()
+        public async Task<IEnumerable<MarketplaceEntity>> GetAllMarketplacesAsync()
         {
-            return marketplaces.ToList();
-        }*/
+            var Markets = await _marketplaces.FindAsync(p => true);
+            return Markets.ToEnumerable(); 
+        }
+
+        public async Task<MarketplaceEntity> UpdateMarketplaceFavoritesAsync(string id, bool isFavorite)
+        {
+            var filter = Builders<MarketplaceEntity>.Filter.Eq(m => m.Id, id);
+            var update = Builders<MarketplaceEntity>.Update
+                .Set(m => m.isFavorite, isFavorite);
+
+            var options = new FindOneAndUpdateOptions<MarketplaceEntity>
+            {
+                ReturnDocument = ReturnDocument.After
+            };
+
+            var updatedEntity = await _marketplaces.FindOneAndUpdateAsync(filter, update, options);
+            return updatedEntity;
+        }
+
+        public async Task<MarketplaceEntity> UpdateMarketplaceStatusAsync(string id, string status)
+        {
+            var filter = Builders<MarketplaceEntity>.Filter.Eq(m => m.Id, id);
+            var update = Builders<MarketplaceEntity>.Update
+                .Set(m => m.status, status);
+
+            var options = new FindOneAndUpdateOptions<MarketplaceEntity>
+            {
+                ReturnDocument = ReturnDocument.After
+            };
+
+            var updatedEntity = await _marketplaces.FindOneAndUpdateAsync(filter, update, options);
+            return updatedEntity;
+        }
     }
 }

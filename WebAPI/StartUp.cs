@@ -2,7 +2,12 @@
 using Microsoft.Extensions.DependencyInjection;
 using MediatR;
 using Application.Injector;
-
+using Infrastructure.Repositories;
+using Domain.Marketplaces.Repositories;
+using Infrastructure.MongoDB.Settings;
+using Microsoft.Extensions.Options;
+using Application.Marketplaces.Queries;
+using Domain.Marketplaces.Entites;
 
 namespace WebApi
 {
@@ -22,6 +27,19 @@ namespace WebApi
             services.AddSingleton(Configuration);
 
             services.AddMediatR(AppDomain.CurrentDomain.GetAssemblies());
+            services.AddTransient<IMarketplaceRepository, MarketplaceRepository>();
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("corsPolicy",
+                    builder =>
+                    {
+                        builder.WithOrigins("http://localhost:3010")
+                                            .AllowAnyHeader()
+                                            .AllowAnyMethod();
+                    });
+            });
+
 
             services.AddControllers();
             services.AddEndpointsApiExplorer();

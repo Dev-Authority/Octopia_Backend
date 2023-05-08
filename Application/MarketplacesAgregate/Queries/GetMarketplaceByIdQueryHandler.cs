@@ -6,7 +6,7 @@ using MediatR;
 
 namespace Application.Marketplaces.Queries
 {
-    public class GetMarketplaceByIdQueryHandler : IRequestHandler<GetMarketplaceByIdQuery, Result<MarketplaceModel>>
+    public class GetMarketplaceByIdQueryHandler : IRequestHandler<GetMarketplaceByIdQuery, Result<MarketplaceEntity>>
     {
 
         private readonly IMarketplaceRepository _marketplaceRepository;
@@ -16,10 +16,10 @@ namespace Application.Marketplaces.Queries
             _marketplaceRepository = marketplaceRepository;
         }
 
-        public async Task<Result<MarketplaceModel>> Handle(GetMarketplaceByIdQuery request, CancellationToken cancellationToken)
+        public async Task<Result<MarketplaceEntity>> Handle(GetMarketplaceByIdQuery request, CancellationToken cancellationToken)
         {
             //Validation
-            if(request.Id < 1)
+            if(request.Id == null)
             {
                 return Result.Fail($"Identifier < 1");
             }
@@ -27,15 +27,9 @@ namespace Application.Marketplaces.Queries
             //Process
             MarketplaceEntity marketplace = _marketplaceRepository.GetById(request.Id);
 
-            var result = new MarketplaceModel
-            {
-                Name = marketplace.Name,
-                Description = marketplace.Description,
-            };
-
             //Success
 
-            return Result.Ok(result);
+            return Result.Ok(marketplace);
 
         }
     }
