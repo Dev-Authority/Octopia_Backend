@@ -7,7 +7,7 @@ namespace Identity.API.Models
     public class User : MongoIdentityUser<Guid>
     {
 
-        public string? UserName { get; set; }
+        public string? FullName { get; set; }
 
     }
 }
