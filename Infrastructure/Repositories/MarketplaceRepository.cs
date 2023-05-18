@@ -16,10 +16,10 @@ namespace Infrastructure.Repositories
         private MongoClient _mongoClient = null;
         private IMongoDatabase _database = null;
         private IMongoCollection<MarketplaceEntity> _marketplaces = null;
-        public MarketplaceRepository() 
+        public MarketplaceRepository(IMongoDbSettings settings) 
         {
-            _mongoClient = new MongoClient("mongodb+srv://mehdiakkaemail:eSMsbDE5FIdQXeHh@octopia.adzeywo.mongodb.net/?retryWrites=true&w=majority");
-            _database = _mongoClient.GetDatabase("Octopia");
+            _mongoClient = new MongoClient(settings.ConnectionString);
+            _database = _mongoClient.GetDatabase(settings.DatabaseName) ;
             _marketplaces = _database.GetCollection<MarketplaceEntity>("Marketplaces");
         }
         

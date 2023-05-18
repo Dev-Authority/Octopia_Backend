@@ -92,7 +92,17 @@ namespace Identity.API.Controllers
             try
             {
                 var user = await _userManager.FindByEmailAsync(request.Email);
-                if (user is null) return new LoginResponse { Message = "invalid email/Password", Success = false };
+                if (user is null)
+                {
+                    return new LoginResponse { Message = "invalid email", Success = false };
+                }
+                else
+                {
+                    var result = await _userManager.CheckPasswordAsync(user, request.Password);
+                    if (!result) return new LoginResponse { Message = "invalid Password", Success = false };
+                }
+                
+
 
                 var claims = new List<Claim>
             {

@@ -53,7 +53,7 @@ builder.Services.AddAuthentication(x =>
     x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 }).AddJwtBearer(x=>
 {
-    x.RequireHttpsMetadata = true;
+    x.RequireHttpsMetadata = false;
     x.SaveToken = true;
     x.TokenValidationParameters = new TokenValidationParameters
     {
@@ -61,8 +61,8 @@ builder.Services.AddAuthentication(x =>
         ValidateIssuer = true,
         ValidateAudience = true,
         ValidateLifetime = true,
-        ValidIssuer = "https://localhost:5001",
-        ValidAudience = "https://localhost:5001",
+        ValidIssuer = "https://localhost:7111",
+        ValidAudience = "https://localhost:7192",
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("0FFA06DD318FB46565DB729A60A3154D")),
         ClockSkew = TimeSpan.Zero
     };

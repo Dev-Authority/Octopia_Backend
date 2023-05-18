@@ -4,6 +4,7 @@ using Application.MarketplacesAgregate.Commands;
 using Domain.Marketplaces.Entites;
 using Domain.Marketplaces.Repositories;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 
@@ -25,6 +26,7 @@ namespace WebAPI.Controllers.Marketplaces
         }
 
 
+        [Authorize]
         [HttpGet("GetMarketplaceById")]
         [ProducesResponseType(typeof(MarketplaceEntity), StatusCodes.Status200OK)]
         public IActionResult GetMarketplaceById([FromQuery] GetMarketplaceByIdQuery query, CancellationToken cancellationToken) 
